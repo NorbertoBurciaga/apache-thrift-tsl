@@ -1,3 +1,154 @@
+# apache-thrift-TSL
+
+## Contents
+
+* [Introduction](#introduction)
+* [Project Hierarchy](#project-hierarchy)
+* [Getting Started](#getting-started)
+* [Support](#support)
+* [FAQ](#faq)
+* [Development](#development)
+* [License](#license)
+* [References](#references)
+
+## Introduction
+
+Simple example of apache thrift server using a TSL connection compiled with cmake.
+
+[Contents](#contents)
+
+## Project Hierarchy
+
+```console
+.
+├── CMakeLists.txt
+├── keys
+│   ├── CA.pem
+│   ├── client.crt
+│   ├── client.key
+│   ├── server.crt
+│   └── server.key
+├── LICENSE
+├── README.md
+└── src
+    ├── CMakeLists.txt
+    ├── CppClient.cpp
+    ├── CppServer.bak1
+    ├── CppServer.bak2
+    ├── CppServer.cpp
+    ├── shared.thrift
+    └── tutorial.thrift
+```
+
+[Contents](#contents)
+
+## Getting Started
+
+### Requirements
+* Make
+* Boost
+* Apache Thrift
+
+### Installation
+
+#### Installing some packages required
+```console
+sudo apt install git-all gcc g++ flex bison make cmake autoconf automake libtool autotools-dev libevent-dev zlib1g-dev pkg-config libssl-dev npm python-all python-all-dev python-all-dbg python3-all python3-all-dev python3-all-dbg valgrind
+```
+
+#### Install Boost
+```console
+$ cd Downloads
+$ wget https://dl.bintray.com/boostorg/release/1.67.0/source/boost_1_67_0.tar.gz
+$ tar xvf boost_1_67_0.tar.gz
+$ cd boost_1_67_0/
+$ sudo ./bootstrap.sh --prefix=/usr/local
+Set the use of MPI
+$ user_configFile=`find $PWD -name user-config.jam`
+$ echo $user_configFile
+/home/norberto/Downloads/boost_1_67_0/tools/build/example/user-config.jam
+$ echo "using mpi;" >> $user_configFile
+$ sudo ./b2 install
+```
+
+#### Install Apache Thrift
+```console
+$ git clone https://github.com/apache/thrift.git
+$ ./bootstrap.sh
+$ ./configure --with-boost=/usr/local
+$ make
+it sends a ruby error:
+/usr/local/bin/rake:23:in `load': cannot load such file -- /usr/share/rubygems-integration/all/specifications/exe/rake (LoadError)
+
+but removing rake as follows could work:
+$ sudo rm /usr/share/rubygems-integration/all/specifications/rake-12.3.1.gemspec
+$ make check
+I had to do this again: $ pip install backports.ssl_match_hostname because of a phyton error: install backports.ssl_match_hostname...see https://github.com/ipython/ipython/issues/5911
+$ sudo make install
+$ sudo
+```
+
+#### Install project
+
+```console
+$ git clone https://github.com/NorbertoBurciaga/apache-thrift-tsl.git
+$ cd apache-thrift-tsl
+apache-thrift-tsl$ mkdir build
+apache-thrift-tsl$ cd build
+apache-thrift-tsl/build$ cmake .. && make
+```
+The project has keys to connect using TSL, but it all depends if the certificate already expired or not. In case you need to recreate keys use the following:
+
+Create the private key and the certificate
+```console
+openssl req -nodes -newkey rsa:2048 -keyout norbers.key -out norbers.crt -x509 -days 365
+```
+
+Create the trusted certificate
+```console
+openssl x509 -in norbers.crt -text > CA.pem
+```
+
+
+
+### Testing
+
+To test:
+Start the server in a new process (adding an & at the end of the command)
+```console
+build$ cd bin
+apache-thrift-tsl/build/bin$ ./Server &
+```
+After the server is running, execute the client
+```console
+/apache-thrift-tsl/build/bin$ ./Client
+```
+After you finish you can terminate the hello_server by killing the process, look for the process Id displayed when launch and execute the following:
+```console
+$ kill -9 3692
+```
+Note in this case is 3692, look for your pid.
+
+### Documentation
+
+[Contents](#contents)
+
+## Support
+Technical support is available in 
+
+[Contents](#contents)
+
+## FAQ
+
+[Contents](#contents)
+
+## Development
+If you want to contribute....
+
+[Contents](#contents)
+
+## License
+
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
@@ -199,3 +350,14 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+[Contents](#contents)
+
+## References
+
+https://blog.talpor.com/2015/07/ssltls-certificates-beginners-tutorial/
+thrift-0.11.0/test/keys/README.md
+
+[Contents](#contents)
+
+
